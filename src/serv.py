@@ -46,11 +46,6 @@ def main():
 
     f.close()
 
-    print(consKey)
-    print(consSec)
-    print(accessTok)
-    print(accessSecret)
-
     auth = OAuthHandler(consKey, consSec)
     auth.set_access_token(accessTok, accessSecret)
 
