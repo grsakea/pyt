@@ -6,7 +6,6 @@ import http.server
 import http.client
 import os.path
 import pickle
-import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -30,34 +29,40 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
     """ Get every tweet with id > of path"""
     def do_GET(self):
         try:
-            status_id = int(self.path)
-            print(status_id)
-
-            if tweets[-1].tid <= status_id:
-                self.send_response(204)
-                self.end_headers()
-
+            if "/status/from_id/" in self.path:
+                status_id = int(self.path.replace("/status/from_id/"))
+                print(status_id)
+                self.send_tweets(status_id)
             else:
-                to_send = []
+                raise Exception("Unknown Request")
 
-                i = len(tweets) - 1
-                while True:
-                    cur = tweets[i]
-                    if cur.tid <= status_id or i <= 0:
-                        break
-                    to_send.append(cur)
-                    i -= 1
-
-                self.send_response(200)
-                self.send_header("Content-type", "application/octet-stream")
-                self.end_headers()
-                pickle.dump(to_send, self.wfile)
         except Exception as ex:
             self.send_response(500)
             self.send_header("Content-type", "stacktrace")
             self.end_headers()
 
             self.wfile.write(str(ex).encode("utf-8"))
+
+    def send_tweets(self, status_id):
+        if tweets[-1].tid <= status_id:
+            self.send_response(204)
+            self.end_headers()
+
+        else:
+            to_send = []
+
+            i = len(tweets) - 1
+            while True:
+                cur = tweets[i]
+                if cur.tid <= status_id or i <= 0:
+                    break
+                to_send.append(cur)
+                i -= 1
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
+            pickle.dump(to_send, self.wfile)
 
 
 def load_auth():
@@ -77,9 +82,9 @@ def load_auth():
 
 
 def main():
-    "auth = load_auth()"
+    auth = load_auth()
 
-    "start_stream(auth)"
+    start_stream(auth)
     start_server()
 
 
