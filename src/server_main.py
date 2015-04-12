@@ -10,15 +10,9 @@ import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
+from models import Tweet
 
 tweets = []
-
-
-class Tweet():
-    def __init__(self, status):
-        self.status = status
-        self.tid = status.id
-        self.read = False
 
 
 class StreamHandler(StreamListener):
