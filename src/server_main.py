@@ -12,7 +12,6 @@ from tweepy import OAuthHandler
 from tweepy import Stream
 
 tweets = []
-read_status = {}
 
 
 class Tweet():
@@ -26,9 +25,6 @@ class StreamHandler(StreamListener):
 
     def on_status(self, status):
         tweets.append(Tweet(status))
-        print(status.text)
-        """print(status.id)"""
-        print("---------- " + str(len(tweets)))
         return True
 
     def on_error(self, status):
@@ -39,28 +35,35 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
 
     """ Get every tweet with id > of path"""
     def do_GET(self):
-        status_id = int(self.path)
-        print(status_id)
+        try:
+            status_id = int(self.path)
+            print(status_id)
 
-        if tweets[-1].tid <= status_id:
-            self.send_response(204)
+            if tweets[-1].tid <= status_id:
+                self.send_response(204)
+                self.end_headers()
+
+            else:
+                to_send = []
+
+                i = len(tweets) - 1
+                while True:
+                    cur = tweets[i]
+                    if cur.tid <= status_id or i <= 0:
+                        break
+                    to_send.append(cur)
+                    i -= 1
+
+                self.send_response(200)
+                self.send_header("Content-type", "application/octet-stream")
+                self.end_headers()
+                pickle.dump(to_send, self.wfile)
+        except Exception as ex:
+            self.send_response(500)
+            self.send_header("Content-type", "stacktrace")
             self.end_headers()
 
-        else:
-            to_send = []
-
-            i = -1
-            while True:
-                cur = tweets[i]
-                to_send.append(cur)
-                i -= 1
-                if cur.tid <= status_id or -i > len(tweets):
-                    break
-
-            self.send_response(200)
-            self.send_header("Content-type", "application/octet-stream")
-            self.end_headers()
-            pickle.dump(to_send, self.wfile)
+            self.wfile.write(str(ex).encode("utf-8"))
 
 
 def load_auth():
