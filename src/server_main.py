@@ -2,11 +2,13 @@
 
 import socketserver
 import os.path
+import json
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
 tweets = []
+read_status = {}
 
 
 class Tweet():
@@ -30,12 +32,18 @@ class StreamHandler(StreamListener):
 
 
 class NetworkRequestHandler(socketserver.BaseRequestHandler):
+
     def handle(self):
-        print(self.request.recv(1024))
+        buf = ""
+        temp = "0"
+        while temp != b"":
+            temp = self.request.recv(2048)
+            buf += temp.decode('utf-8')
+            print(str(temp))
+        print(buf)
 
 
-def main():
-
+def load_auth():
     f = open(os.path.expanduser('~/.config/pyt'))
 
     consKey = f.readline().replace('\n', '')
@@ -48,6 +56,11 @@ def main():
 
     auth = OAuthHandler(consKey, consSec)
     auth.set_access_token(accessTok, accessSecret)
+    return auth
+
+
+def main():
+    auth = load_auth()
 
     start_stream(auth)
     start_server()
