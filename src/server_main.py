@@ -37,12 +37,30 @@ class StreamHandler(StreamListener):
 
 class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
 
+    """ Get every tweet with id > of path"""
     def do_GET(self):
-        print(self.path)
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write("<html>THis is not done yet</html>".encode('utf-8'))
+        status_id = int(self.path)
+        print(status_id)
+
+        if tweets[-1].tid <= status_id:
+            self.send_response(204)
+            self.end_headers()
+
+        else:
+            to_send = []
+
+            i = -1
+            while True:
+                cur = tweets[i]
+                to_send.append(cur)
+                i -= 1
+                if cur.tid <= status_id or -i > len(tweets):
+                    break
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
+            pickle.dump(to_send, self.wfile)
 
 
 def load_auth():
