@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
+import time
 import socketserver
 import os.path
-import json
+import pickle
+import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -34,13 +36,19 @@ class StreamHandler(StreamListener):
 class NetworkRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
-        buf = ""
-        temp = "0"
-        while temp != b"":
+        print("lss")
+        full = b""
+        temp = self.request.recv(2048)
+        while len(temp) == 2048:
+            full = full + temp
             temp = self.request.recv(2048)
-            buf += temp.decode('utf-8')
-            print(str(temp))
-        print(buf)
+            print(len(temp))
+
+        full = full + temp
+        print("test")
+        l = pickle.loads(full)
+        print(type(l))
+        print(len(l))
 
 
 def load_auth():
@@ -62,8 +70,12 @@ def load_auth():
 def main():
     auth = load_auth()
 
-    start_stream(auth)
-    start_server()
+    "start_stream(auth)"
+    api = tweepy.API(auth)
+    z = api.home_timeline()
+    print(type(z))
+    print(len(z))
+    start_server(z)
 
 
 def start_stream(auth):
@@ -72,7 +84,7 @@ def start_stream(auth):
     stream.userstream(async=True)
 
 
-def start_server():
+def start_server(tw):
     import socket
     import threading
     address = ('localhost', 0)
@@ -86,8 +98,11 @@ def start_server():
     # Connect to the server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip, port))
-    message = b'Hello, world'
-    s.send(message)
+    g = pickle.dumps(tw)
+    print(type(g))
+    print(len(g))
+    s.sendall(g)
+    time.sleep(500)
 
 
 if __name__ == '__main__':
