@@ -2,6 +2,8 @@
 
 import time
 import socketserver
+import http.server
+import http.client
 import os.path
 import pickle
 import tweepy
@@ -33,22 +35,14 @@ class StreamHandler(StreamListener):
         print(status)
 
 
-class NetworkRequestHandler(socketserver.BaseRequestHandler):
+class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
 
-    def handle(self):
-        print("lss")
-        full = b""
-        temp = self.request.recv(2048)
-        while len(temp) == 2048:
-            full = full + temp
-            temp = self.request.recv(2048)
-            print(len(temp))
-
-        full = full + temp
-        print("test")
-        l = pickle.loads(full)
-        print(type(l))
-        print(len(l))
+    def do_GET(self):
+        print(self.path)
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write("<html>THis is not done yet</html>".encode('utf-8'))
 
 
 def load_auth():
@@ -68,14 +62,10 @@ def load_auth():
 
 
 def main():
-    auth = load_auth()
+    "auth = load_auth()"
 
     "start_stream(auth)"
-    api = tweepy.API(auth)
-    z = api.home_timeline()
-    print(type(z))
-    print(len(z))
-    start_server(z)
+    start_server()
 
 
 def start_stream(auth):
@@ -84,10 +74,9 @@ def start_stream(auth):
     stream.userstream(async=True)
 
 
-def start_server(tw):
-    import socket
+def start_server():
     import threading
-    address = ('localhost', 0)
+    address = ('localhost', 8080)
     server = socketserver.TCPServer(address, NetworkRequestHandler)
     ip, port = server.server_address
 
@@ -96,12 +85,11 @@ def start_server(tw):
     t.start()
 
     # Connect to the server
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((ip, port))
-    g = pickle.dumps(tw)
-    print(type(g))
-    print(len(g))
-    s.sendall(g)
+    conn = http.client.HTTPConnection("localhost", 8080)
+    conn.request("GET", "5880")
+    resp = conn.getresponse()
+    print(resp.status)
+    print(resp.read())
     time.sleep(500)
 
 
