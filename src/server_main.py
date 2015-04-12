@@ -6,6 +6,7 @@ import http.server
 import http.client
 import os.path
 import pickle
+import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -30,9 +31,11 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             if "/status/from_id/" in self.path:
-                status_id = int(self.path.replace("/status/from_id/"))
-                print(status_id)
+                status_id = int(self.path.replace("/status/from_id/", ""))
                 self.send_tweets(status_id)
+            elif "/status/length" in self.path:
+                self.size_tweets()
+
             else:
                 raise Exception("Unknown Request")
 
@@ -42,6 +45,11 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
             self.wfile.write(str(ex).encode("utf-8"))
+
+    def size_tweets(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(str(len(tweets)).encode("utf-8"))
 
     def send_tweets(self, status_id):
         if tweets[-1].tid <= status_id:
@@ -62,7 +70,8 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "application/octet-stream")
             self.end_headers()
-            pickle.dump(to_send, self.wfile)
+            out = pickle.dump(to_send, self.wfile)
+            self.wfile.write(out)
 
 
 def load_auth():
@@ -83,6 +92,10 @@ def load_auth():
 
 def main():
     auth = load_auth()
+    api = tweepy.API(auth)
+    st = api.home_timeline()
+    for i in st:
+        tweets.append(Tweet(i))
 
     start_stream(auth)
     start_server()
@@ -106,10 +119,11 @@ def start_server():
 
     # Connect to the server
     conn = http.client.HTTPConnection("localhost", 8080)
-    conn.request("GET", "5880")
+    """conn.request("GET", "/status/from_id/5880")"""
+    conn.request("GET", "/status/length")
     resp = conn.getresponse()
     print(resp.status)
-    print(resp.read())
+    print(resp.read().decode("utf-8"))
     time.sleep(500)
 
 
