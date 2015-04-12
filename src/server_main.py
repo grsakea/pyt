@@ -70,8 +70,7 @@ class NetworkRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "application/octet-stream")
             self.end_headers()
-            out = pickle.dump(to_send, self.wfile)
-            self.wfile.write(out)
+            pickle.dump(to_send, self.wfile)
 
 
 def load_auth():
