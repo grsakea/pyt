@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
-from gtweet import gTweet
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from gtweet import StatusWidget
 
 
 class MainWindow(QWidget):
@@ -13,18 +13,10 @@ class MainWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        label1 = QLabel("LOL")
-        label2 = QLabel("L0L")
-        label3 = QLabel("1O1")
-
-        layout.addWidget(label1)
-        layout.addWidget(label2)
-        layout.addWidget(label3)
-
         self.setLayout(layout)
         self.lol = layout
 
         self.show()
 
     def addTweet(self, tweet):
-        self.lol.addWidget(gTweet(tweet))
+        self.lol.addWidget(StatusWidget(tweet))
