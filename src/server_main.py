@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
-import time
 import socketserver
 import http.server
-import http.client
 import os.path
 import pickle
 import tweepy
@@ -115,15 +113,6 @@ def start_server():
     t = threading.Thread(target=server.serve_forever)
     t.setDaemon(True)
     t.start()
-
-    # Connect to the server
-    conn = http.client.HTTPConnection("localhost", 8080)
-    """conn.request("GET", "/status/from_id/5880")"""
-    conn.request("GET", "/status/length")
-    resp = conn.getresponse()
-    print(resp.status)
-    print(resp.read().decode("utf-8"))
-    time.sleep(500)
 
 
 if __name__ == '__main__':
