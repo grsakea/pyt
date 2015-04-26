@@ -16,6 +16,8 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         self.lol = layout
 
+        self.lol.setSpacing(0)
+        layout.setContentsMargins(1, 1, 1, 1)
         self.show()
 
     def addTweet(self, tweet):
