@@ -1,8 +1,9 @@
 import requests
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
-        QFrame, QSizePolicy
-from PyQt5.QtGui import QPixmap
+        QFrame, QSizePolicy, QTextEdit
+from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5 import QtCore
+from PyQt5.QtCore import QPoint
 from datetime import timezone
 
 
@@ -33,7 +34,8 @@ class StatusWidget(QWidget):
 
     def process_text(self, status):
         orig_text = status.text
-        print((status.entities))
+        status.text = status.text.replace("\n", "<br>")
+        status.text = status.text.replace("<br><br>", "<br>")
         if hasattr(status, 'extended_entities'):
             for i in status.extended_entities['media']:
                 status.text += "<a href={0}> Pic</a>".\
@@ -46,7 +48,7 @@ class StatusWidget(QWidget):
                                                           i['display_url'])
                 status.text = status.text.replace(to_rep, in_place)
 
-        print("Orig : " + orig_text)
+        print(orig_text)
 
     def add_pic(self):
         if self.rt:
@@ -63,7 +65,7 @@ class StatusWidget(QWidget):
                 .astimezone(tz=None)
         string = time.strftime("%d/%m - %H:%M")
 
-        self.lay.addWidget(QLabel(string), 0, 5)
+        self.lay.addWidget(QLabel(string), 0, 3)
 
     def initUI(self, tweet):
         layout = QGridLayout()
@@ -87,12 +89,18 @@ class StatusWidget(QWidget):
 
         text = QTextBrowser()
         text.setHtml(self.st.text)
+        nb_linebreak = len(self.st.text.split("<br>"))
         text.setOpenExternalLinks(True)
-        text.setFixedSize(500, 48)
-        text.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        text.moveCursor(QTextCursor.End)
+        if nb_linebreak == 1:
+            text.setFixedSize(400, 48)
+        else:
+            text.setFixedSize(400, 90)
+        print(nb_linebreak)
+        # text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum)
 
         layout.addWidget(QLabel(name), 0, 1)
-        layout.addWidget(text, 1, 1, 1, -1)
+        layout.addWidget(text, 1, 1, 1, 3)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
