@@ -35,12 +35,15 @@ class StatusWidget(QWidget):
         orig_text = status.text
         print((status.entities))
         if hasattr(status, 'extended_entities'):
-            print("OMG!!! ", status.extended_entities)
+            for i in status.extended_entities['media']:
+                status.text += "<a href={0}> Pic</a>".\
+                        format(i['media_url_https'])
+                status.text = status.text.replace(i['url'], '')
         if 'urls' in status.entities:
             for i in status.entities['urls']:
                 to_rep = orig_text[i['indices'][0]:i['indices'][1]]
-                in_place = '<a href="' + i['expanded_url'] + '">' +\
-                           i['display_url'] + "</a>"
+                in_place = '<a href="{0}">{1}</a>'.format(i['expanded_url'],
+                                                          i['display_url'])
                 status.text = status.text.replace(to_rep, in_place)
 
         print("Orig : " + orig_text)
