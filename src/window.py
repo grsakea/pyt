@@ -22,6 +22,10 @@ class MainWindow(QWidget):
         placehold.setLayout(lay2)
         self.lol = lay2
 
+        lay2.setSpacing(0)
+        lay.setSpacing(0)
+        lay.setContentsMargins(0, 0, 0, 0)
+
         self.show()
 
     def addTweet(self, tweet):
