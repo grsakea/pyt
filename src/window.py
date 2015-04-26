@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from gtweet import StatusWidget
 
 
@@ -8,16 +8,20 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 300, 220)
         self.setWindowTitle('Terminator Preferences')
 
-        layout = QVBoxLayout()
+        lay = QVBoxLayout(self)
+        scr = QScrollArea(self)
+        scr.setWidgetResizable(True)
 
-        self.setLayout(layout)
-        self.lol = layout
+        lay2 = QVBoxLayout()
+        self.setLayout(lay)
+        placehold = QWidget()
+        lay.addWidget(scr)
+        scr.setWidget(placehold)
+        placehold.setLayout(lay2)
+        self.lol = lay2
 
-        self.lol.setSpacing(0)
-        layout.setContentsMargins(1, 1, 1, 1)
         self.show()
 
     def addTweet(self, tweet):
