@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QSizePolicy, QTextEdit
 from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5 import QtCore
-from PyQt5.QtCore import QPoint
 from datetime import timezone
 
 
@@ -20,6 +19,7 @@ class StatusWidget(QWidget):
             self.st = tweet.status
 
         self.initUI(tweet)
+        print("-----------------")
 
     def getPix(self, url, scaled=False):
         r = requests.get(url)
@@ -34,21 +34,43 @@ class StatusWidget(QWidget):
 
     def process_text(self, status):
         orig_text = status.text
-        status.text = status.text.replace("\n", "<br>")
-        status.text = status.text.replace("<br><br>", "<br>")
+        html_text = status.text
+        pretty_text = status.text
+
+        html_text = html_text.replace("\n", "<br>")
+        html_text = html_text.replace("<br><br>", "<br>")
         if hasattr(status, 'extended_entities'):
             for i in status.extended_entities['media']:
-                status.text += "<a href={0}> Pic</a>".\
+                html_text += "<a href={0}> Pic</a>".\
                         format(i['media_url_https'])
-                status.text = status.text.replace(i['url'], '')
+                html_text = html_text.replace(i['url'], '')
+                pretty_text = pretty_text.replace(i['url'], '')
+                pretty_text += " Pic"
+
         if 'urls' in status.entities:
             for i in status.entities['urls']:
                 to_rep = orig_text[i['indices'][0]:i['indices'][1]]
                 in_place = '<a href="{0}">{1}</a>'.format(i['expanded_url'],
                                                           i['display_url'])
-                status.text = status.text.replace(to_rep, in_place)
+                html_text = html_text.replace(to_rep, in_place)
+                pretty_text = pretty_text.replace(to_rep, i['display_url'])
 
-        print(orig_text)
+        print(pretty_text)
+        status.text = html_text
+
+        splitted = pretty_text.split("\n")
+        nb = len(splitted)
+        for i in splitted:
+            nb += int(len(i)/72)
+            if len(i) == 0:
+                nb -= 1
+
+        print(status.text)
+        print(len(splitted))
+        print(nb)
+        print("-+-")
+
+        return nb
 
     def add_pic(self):
         if self.rt:
@@ -85,17 +107,21 @@ class StatusWidget(QWidget):
             name = "<b>" + self.st.user.name + "</b> <i>@" +\
                     self.st.user.screen_name + "</i>"
 
-        self.process_text(self.st)
+        nb_linebreak = self.process_text(self.st)
 
         text = QTextBrowser()
         text.setHtml(self.st.text)
-        nb_linebreak = len(self.st.text.split("<br>"))
         text.setOpenExternalLinks(True)
         text.moveCursor(QTextCursor.End)
         if nb_linebreak == 1:
-            text.setFixedSize(400, 48)
-        else:
-            text.setFixedSize(400, 90)
+            text.setFixedSize(500, 30)
+        elif nb_linebreak == 2:
+            text.setFixedSize(500, 48)
+        elif nb_linebreak == 3:
+            text.setFixedSize(500, 68)
+        elif nb_linebreak == 4:
+            text.setFixedSize(500, 88)
+
         print(nb_linebreak)
         # text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum)
 
@@ -111,4 +137,3 @@ class StatusWidget(QWidget):
 
         layout.setSpacing(5)
         layout.setContentsMargins(0, 0, 0, 0)
-        print("-----------------")
