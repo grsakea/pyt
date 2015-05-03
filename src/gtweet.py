@@ -1,6 +1,6 @@
 import requests
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
-        QFrame, QSizePolicy, QTextEdit
+        QFrame
 from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5 import QtCore
 from datetime import timezone
@@ -55,7 +55,6 @@ class StatusWidget(QWidget):
                 html_text = html_text.replace(to_rep, in_place)
                 pretty_text = pretty_text.replace(to_rep, i['display_url'])
 
-        print(pretty_text)
         status.text = html_text
 
         splitted = pretty_text.split("\n")
@@ -64,11 +63,6 @@ class StatusWidget(QWidget):
             nb += int(len(i)/72)
             if len(i) == 0:
                 nb -= 1
-
-        print(status.text)
-        print(len(splitted))
-        print(nb)
-        print("-+-")
 
         return nb
 
