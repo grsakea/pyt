@@ -4,3 +4,6 @@ class Tweet():
         self.status = status
         self.tid = status.id
         self.read = False
+
+    def __lt__(self, other):
+        return self.tid < other.tid
