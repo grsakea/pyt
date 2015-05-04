@@ -64,6 +64,7 @@ class StatusWidget(QWidget):
             if len(i) == 0:
                 nb -= 1
 
+        print(orig_text)
         return nb
 
     def add_pic(self):
@@ -116,7 +117,6 @@ class StatusWidget(QWidget):
         elif nb_linebreak == 4:
             text.setFixedSize(500, 88)
 
-        print(nb_linebreak)
         # text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum)
 
         layout.addWidget(QLabel(name), 0, 1)
