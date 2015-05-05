@@ -84,26 +84,8 @@ class StatusWidget(QWidget):
 
         self.lay.addWidget(QLabel(string), 0, 3)
 
-    def initUI(self, tweet):
-        layout = QGridLayout()
-        self.setLayout(layout)
-        self.lay = layout
-
-        layout.setColumnStretch(10, 100)
-
-        self.add_pic()
-        self.add_time()
-
-        if hasattr(tweet.status, 'retweeted_status'):
-            name = '<b>' + self.st.user.name + '</b> <i>@' +\
-                    self.st.user.screen_name +\
-                   '</i> RT by: <b>' + self.rtst.user.name + '</b>'
-        else:
-            name = "<b>" + self.st.user.name + "</b> <i>@" +\
-                    self.st.user.screen_name + "</i>"
-
+    def add_text(self):
         nb_linebreak = self.process_text(self.st)
-
         text = QTextBrowser()
         text.setHtml(self.st.text)
         text.setOpenExternalLinks(True)
@@ -116,11 +98,31 @@ class StatusWidget(QWidget):
             text.setFixedSize(500, 68)
         elif nb_linebreak == 4:
             text.setFixedSize(500, 88)
+        else:
+            text.setFixedSize(500, 108)
 
-        # text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum)
+        self.lay.addWidget(text, 1, 1, 1, 3)
+
+    def initUI(self, tweet):
+        layout = QGridLayout()
+        self.setLayout(layout)
+        self.lay = layout
+
+        layout.setColumnStretch(10, 100)
+
+        self.add_pic()
+        self.add_time()
+        self.add_text()
+
+        if hasattr(tweet.status, 'retweeted_status'):
+            name = '<b>' + self.st.user.name + '</b> <i>@' +\
+                    self.st.user.screen_name +\
+                   '</i> RT by: <b>' + self.rtst.user.name + '</b>'
+        else:
+            name = "<b>" + self.st.user.name + "</b> <i>@" +\
+                    self.st.user.screen_name + "</i>"
 
         layout.addWidget(QLabel(name), 0, 1)
-        layout.addWidget(text, 1, 1, 1, 3)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
