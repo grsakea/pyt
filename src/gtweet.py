@@ -103,6 +103,17 @@ class StatusWidget(QWidget):
 
         self.lay.addWidget(text, 1, 1, 1, 3)
 
+    def add_username(self):
+        if self.rt:
+            name = '<b>' + self.st.user.name + '</b> <i>@' +\
+                    self.st.user.screen_name +\
+                   '</i> RT by: <b>' + self.rtst.user.name + '</b>'
+        else:
+            name = "<b>" + self.st.user.name + "</b> <i>@" +\
+                    self.st.user.screen_name + "</i>"
+
+        self.lay.addWidget(QLabel(name), 0, 1)
+
     def initUI(self, tweet):
         layout = QGridLayout()
         self.setLayout(layout)
@@ -113,16 +124,7 @@ class StatusWidget(QWidget):
         self.add_pic()
         self.add_time()
         self.add_text()
-
-        if hasattr(tweet.status, 'retweeted_status'):
-            name = '<b>' + self.st.user.name + '</b> <i>@' +\
-                    self.st.user.screen_name +\
-                   '</i> RT by: <b>' + self.rtst.user.name + '</b>'
-        else:
-            name = "<b>" + self.st.user.name + "</b> <i>@" +\
-                    self.st.user.screen_name + "</i>"
-
-        layout.addWidget(QLabel(name), 0, 1)
+        self.add_username()
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
