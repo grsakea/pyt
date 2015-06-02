@@ -90,7 +90,7 @@ def load_auth():
 def main():
     auth = load_auth()
     api = tweepy.API(auth)
-    st = api.home_timeline()
+    st = api.home_timeline(count=200)
     for i in st:
         tweets.append(Tweet(i))
 
