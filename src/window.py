@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
 from PyQt5.QtCore import QTimer, QFile
-import PyQt5.QtCore
+from PyQt5 import QtCore
 from gtweet import StatusWidget
 import http.client
 import pickle
@@ -47,7 +47,7 @@ class MainWindow(QWidget):
         lay = QVBoxLayout(self)
         scr = QScrollArea(self)
         scr.setWidgetResizable(True)
-        scr.setHorizontalScrollBarPolicy(PyQt5.QtCore.ScrollBarAlwaysOff)
+        scr.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         lay2 = QVBoxLayout()
         self.setLayout(lay)
