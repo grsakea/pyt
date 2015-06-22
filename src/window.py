@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
-from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
+from PyQt5.QtCore import QTimer, QFile
+import PyQt5.QtCore
 from gtweet import StatusWidget
 import http.client
 import pickle
@@ -16,7 +17,7 @@ class MainWindow(QWidget):
 
         tim = QTimer(self)
         tim.timeout.connect(self.fetch_tweets)
-        tim.start(10000)
+        tim.start(60000)
 
         self.show()
 
@@ -26,7 +27,7 @@ class MainWindow(QWidget):
         else:
             id = self.tweets[-1].tid
 
-        conn = http.client.HTTPConnection("localhost", 8080)
+        conn = http.client.HTTPConnection("127.0.0.2", 8080)
         conn.request("GET", "/status/from_id/" + str(id))
         resp = conn.getresponse()
         if resp.status == 200:
@@ -34,18 +35,25 @@ class MainWindow(QWidget):
             tw.sort()
             for i in tw:
                 self.addTweet(i)
+            f = QFile("last_tweet")
+            f.open(QFile.WriteOnly)
+            f.write(tw[-1].tid)
 
     def initUI(self):
-        self.setWindowTitle('Terminator Preferences')
+        self.setWindowTitle('Twitter Client')
+
+        update_button = QPushButton("Update")
 
         lay = QVBoxLayout(self)
         scr = QScrollArea(self)
         scr.setWidgetResizable(True)
+        scr.setHorizontalScrollBarPolicy(PyQt5.QtCore.ScrollBarAlwaysOff)
 
         lay2 = QVBoxLayout()
         self.setLayout(lay)
         placehold = QWidget()
         lay.addWidget(scr)
+        lay.addWidget(update_button)
         scr.setWidget(placehold)
         placehold.setLayout(lay2)
         self.lay = lay2
