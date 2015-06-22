@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
-from PyQt5.QtCore import QTimer, QFile
+from PyQt5.QtCore import QTimer
 from PyQt5 import QtCore
 from gtweet import StatusWidget
 import http.client
@@ -11,6 +11,10 @@ class MainWindow(QWidget):
         super().__init__()
         self.initUI()
         self.hide()
+        f = open("last_tweet", 'r')
+        last_id = int(f.read())
+        print(last_id)
+        f.close()
 
         self.tweets = []
         self.fetch_tweets()
@@ -35,9 +39,9 @@ class MainWindow(QWidget):
             tw.sort()
             for i in tw:
                 self.addTweet(i)
-            f = QFile("last_tweet")
-            f.open(QFile.WriteOnly)
-            f.write(tw[-1].tid)
+            f = open("last_tweet", 'w')
+            f.write(str(tw[-1].tid))
+            f.close()
 
     def initUI(self):
         self.setWindowTitle('Twitter Client')
