@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from PyQt5.QtCore import QTimer
 from PyQt5 import QtCore
 from gtweet import StatusWidget
@@ -17,11 +17,11 @@ class MainWindow(QWidget):
         f.close()
 
         self.tweets = []
-        self.fetch_tweets()
 
-        tim = QTimer(self)
-        tim.timeout.connect(self.fetch_tweets)
-        tim.start(60000)
+        self.fetch_tweets()
+        self.tim = QTimer(self)
+        self.tim.timeout.connect(self.fetch_tweets)
+        self.tim.start(60000)
 
         self.show()
 
@@ -46,8 +46,6 @@ class MainWindow(QWidget):
     def initUI(self):
         self.setWindowTitle('Twitter Client')
 
-        update_button = QPushButton("Update")
-
         lay = QVBoxLayout(self)
         scr = QScrollArea(self)
         scr.setWidgetResizable(True)
@@ -57,7 +55,6 @@ class MainWindow(QWidget):
         self.setLayout(lay)
         placehold = QWidget()
         lay.addWidget(scr)
-        lay.addWidget(update_button)
         scr.setWidget(placehold)
         placehold.setLayout(lay2)
         self.lay = lay2
@@ -70,4 +67,9 @@ class MainWindow(QWidget):
 
     def addTweet(self, tweet):
         self.tweets.append(tweet)
-        self.lay.insertWidget(0, StatusWidget(tweet))
+        widget = StatusWidget(tweet)
+        widget.delete_tweets.connect(self.deleteTweets)
+        self.lay.insertWidget(0, widget)
+
+    def deleteTweets(self, id):
+        print("Delete : " + str(id))

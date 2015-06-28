@@ -1,12 +1,15 @@
 import requests
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
-        QFrame
+        QFrame, QPushButton
 from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5 import QtCore
 from datetime import timezone
 
 
 class StatusWidget(QWidget):
+    delete_tweets = pyqtSignal(str)
+
     def __init__(self, tweet):
         super().__init__()
 
@@ -72,6 +75,8 @@ class StatusWidget(QWidget):
                 nb -= 1
 
         print(orig_text)
+        print(self.st.id_str)
+        print(type(self.st.id_str))
         return nb
 
     def add_pic(self):
@@ -121,6 +126,17 @@ class StatusWidget(QWidget):
 
         self.lay.addWidget(QLabel(name), 0, 1)
 
+    def add_button(self):
+        self.button = QPushButton("X")
+        self.button.pressed.connect(self.send_delete)
+        self.lay.addWidget(self.button, 0, 5, -1, 1)
+
+    def send_delete(self):
+        if self.rt:
+            self.delete_tweets.emit(self.rtst.id_str)
+        else:
+            self.delete_tweets.emit(self.st.id_str)
+
     def initUI(self, tweet):
         layout = QGridLayout()
         self.setLayout(layout)
@@ -132,6 +148,7 @@ class StatusWidget(QWidget):
         self.add_time()
         self.add_text()
         self.add_username()
+        self.add_button()
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
