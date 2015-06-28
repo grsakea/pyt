@@ -13,6 +13,7 @@ class StatusWidget(QWidget):
     def __init__(self, tweet):
         super().__init__()
 
+        self.tid = tweet.status.id
         if hasattr(tweet.status, 'retweeted_status'):
             self.rt = True
             self.st = tweet.status.retweeted_status
