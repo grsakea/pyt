@@ -75,8 +75,6 @@ class StatusWidget(QWidget):
                 nb -= 1
 
         print(orig_text)
-        print(self.st.id_str)
-        print(type(self.st.id_str))
         return nb
 
     def add_pic(self):

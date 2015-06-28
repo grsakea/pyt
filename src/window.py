@@ -66,10 +66,20 @@ class MainWindow(QWidget):
         self.show()
 
     def addTweet(self, tweet):
-        self.tweets.append(tweet)
         widget = StatusWidget(tweet)
+
+        self.tweets.append(widget)
         widget.delete_tweets.connect(self.deleteTweets)
         self.lay.insertWidget(0, widget)
 
-    def deleteTweets(self, id):
-        print("Delete : " + str(id))
+    def deleteTweets(self, string_id):
+        id = int(string_id)
+        for i in self.tweets:
+            if i.rt:
+                to_cmp = i.rtst.id
+            else:
+                to_cmp = i.st.id
+
+            if to_cmp < id:
+                self.lay.removeWidget(i)
+                i.hide()
