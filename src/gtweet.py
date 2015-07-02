@@ -2,7 +2,7 @@ import requests
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QPushButton
-from PyQt5.QtGui import QPixmap, QTextCursor
+from PyQt5.QtGui import QPixmap, QTextCursor, QIcon
 from PyQt5 import QtCore
 from datetime import timezone
 
@@ -126,7 +126,8 @@ class StatusWidget(QWidget):
         self.lay.addWidget(QLabel(name), 0, 1)
 
     def add_button(self):
-        self.button = QPushButton("X")
+        icon = QIcon.fromTheme("edit-delete")
+        self.button = QPushButton(icon, "")
         self.button.pressed.connect(self.send_delete)
         self.lay.addWidget(self.button, 0, 5, -1, 1)
 

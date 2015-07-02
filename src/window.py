@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from gtweet import StatusWidget
 import http.client
@@ -11,10 +12,6 @@ class MainWindow(QWidget):
         super().__init__()
         self.initUI()
         self.hide()
-        f = open("last_tweet", 'r')
-        last_id = int(f.read())
-        print(last_id)
-        f.close()
 
         self.tweets = []
 
@@ -27,7 +24,13 @@ class MainWindow(QWidget):
 
     def fetch_tweets(self):
         if len(self.tweets) == 0:
-            id = 0
+            try:
+                f = open("last_tweet", 'r')
+                id = int(f.read())
+                print(id)
+                f.close()
+            except:
+                id = 0
         else:
             id = self.tweets[-1].tid
 
@@ -39,12 +42,10 @@ class MainWindow(QWidget):
             tw.sort()
             for i in tw:
                 self.addTweet(i)
-            f = open("last_tweet", 'w')
-            f.write(str(tw[-1].tid))
-            f.close()
 
     def initUI(self):
         self.setWindowTitle('Twitter Client')
+        QIcon.setThemeName("Faenza-Dark")
 
         lay = QVBoxLayout(self)
         scr = QScrollArea(self)
@@ -78,3 +79,6 @@ class MainWindow(QWidget):
             if i.tid < id:
                 self.lay.removeWidget(i)
                 i.hide()
+        f = open("last_tweet", 'w')
+        f.write(string_id)
+        f.close()
