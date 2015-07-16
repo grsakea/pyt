@@ -76,7 +76,7 @@ class MainWindow(QWidget):
     def deleteTweets(self, string_id):
         id = int(string_id)
         for i in self.tweets:
-            if i.tid < id:
+            if i.tid <= id:
                 self.lay.removeWidget(i)
                 i.hide()
         f = open("last_tweet", 'w')
