@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 import socketserver
 import http.server
@@ -87,17 +87,6 @@ def load_auth():
     return auth
 
 
-def main():
-    auth = load_auth()
-    api = tweepy.API(auth)
-    st = api.home_timeline(count=200)
-    for i in st:
-        tweets.append(Tweet(i))
-
-    start_stream(auth)
-    start_server()
-
-
 def start_stream(auth):
     l = StreamHandler()
     stream = Stream(auth, l)
@@ -105,14 +94,32 @@ def start_stream(auth):
 
 
 def start_server():
-    import threading
     address = ('localhost', 8080)
     server = socketserver.TCPServer(address, NetworkRequestHandler)
+    server.allow_reuse_address = True
     ip, port = server.server_address
 
-    t = threading.Thread(target=server.serve_forever)
-    t.setDaemon(True)
-    t.start()
+    try:
+        server.serve_forever()
+    except Exception as e:
+        print(e)
+        pass
+    server.shutdown()
+
+
+def main():
+    auth = load_auth()
+    api = tweepy.API(auth)
+    st = api.home_timeline(count=200)
+    for i in st:
+        tweets.append(Tweet(i))
+    tweets.sort()
+    print("Tweets Downloaded")
+
+    start_stream(auth)
+
+    print("Starting Server")
+    start_server()
 
 
 if __name__ == '__main__':
