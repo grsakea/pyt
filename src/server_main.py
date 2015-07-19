@@ -44,6 +44,7 @@ def start_stream(auth):
     l = StreamHandler()
     stream = Stream(auth, l)
     stream.userstream(async=True)
+    return stream
 
 
 def main():
@@ -54,10 +55,7 @@ def main():
         store.tweets.append(Tweet(i))
     store.tweets.sort()
     print("Tweets Downloaded")
-    print(store.tweets[-1].tid)
-
-    # start_stream(auth)
-
+    start_stream(auth)
     print("Starting Server")
     server_bottle.launch_server(store)
 

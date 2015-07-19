@@ -26,6 +26,11 @@ def status_from_id(sid):
     abort(400)
 
 
+@app.route('/status/length')
+def status_length():
+    return str(len(store.tweets))
+
+
 def launch_server(main_store):
     global store
     store = main_store
