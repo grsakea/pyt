@@ -45,18 +45,18 @@ class StatusWidget(QWidget):
         html_text = html_text.replace("<br><br>", "<br>")
         if hasattr(status, 'extended_entities'):
             for i in status.extended_entities['media']:
-                if i['type'] == 'animated_gif':
+                if (i['type'] == 'animated_gif' or i['type'] == 'video'):
                     html_text += "<a href={0}> Vid</a>".\
                                  format(i['video_info']['variants'][0]['url'])
                     html_text = html_text.replace(i['url'], '')
                     pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += " Vid"
+                    pretty_text += "Vid"
                 else:
                     html_text += "<a href={0}:orig> Pic</a>".\
                             format(i['media_url_https'])
                     html_text = html_text.replace(i['url'], '')
                     pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += " Pic"
+                    pretty_text += "Pic"
 
         if 'urls' in status.entities:
             for i in status.entities['urls']:
