@@ -36,6 +36,18 @@ class StatusWidget(QWidget):
         pict.setPixmap(pi)
         return pict
 
+    def choose_video(self, vids):
+        chosen = vids['expanded_url']
+        max_br = -1
+        for i in vids['video_info']['variants']:
+            try:
+                if i['bitrate'] > max_br:
+                    max_br = i['bitrate']
+                    chosen = i['url']
+            except:
+                pass
+        return(chosen)
+
     def process_text(self, status):
         orig_text = status.text
         html_text = status.text
@@ -46,17 +58,17 @@ class StatusWidget(QWidget):
         if hasattr(status, 'extended_entities'):
             for i in status.extended_entities['media']:
                 if (i['type'] == 'animated_gif' or i['type'] == 'video'):
-                    html_text += "<a href={0}> Vid</a>".\
-                                 format(i['video_info']['variants'][0]['url'])
+                    html_text += " <a href={0}>Vid</a>".\
+                                 format(self.choose_video(i))
                     html_text = html_text.replace(i['url'], '')
                     pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += "Vid"
+                    pretty_text += " Vid"
                 else:
-                    html_text += "<a href={0}:orig> Pic</a>".\
+                    html_text += " <a href={0}:orig>Pic</a>".\
                             format(i['media_url_https'])
                     html_text = html_text.replace(i['url'], '')
                     pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += "Pic"
+                    pretty_text += " Pic"
 
         if 'urls' in status.entities:
             for i in status.entities['urls']:
