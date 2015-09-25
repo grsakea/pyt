@@ -34,10 +34,11 @@ class MainWindow(QWidget):
         else:
             id = self.tweets[-1].tid
 
-        r = requests.get("127.0.0.2:8080/status/from_id" + str(id))
+        r = requests.get("http://127.0.0.2:8080/status/from_id/" + str(id))
         if r.status_code == 200:
-            tw = pickle.load(r.data)
+            tw = pickle.loads(r.content)
             tw.sort()
+            print(len(tw))
             for i in tw:
                 self.addTweet(i)
 
