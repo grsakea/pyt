@@ -19,7 +19,7 @@ class Storage:
             r = requests.get(url, stream=True)
             name = url[url.rfind('/'):]
             print(name)
-            with open('~/wonder/' + name) as f:
+            with open('/tmp' + name) as f:
                 for chunk in r.iter_content(chunk_size=1024):
                     if chunk:
                         f.write(chunk)
