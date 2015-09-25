@@ -1,11 +1,16 @@
 class Storage:
     def __init__(self):
         self.tweets = []
-        self.ressource = {}
+        self.tweets_id = set()
+        self.resource = {}
 
     def add_tweet(self, tweet):
-        self.tweets.append(tweet)
+        if tweet.tid not in self.tweets_id:
+            self.tweets_id.add(tweet.tid)
+            self.tweets.append(tweet)
+            for _, url in tweet.ent['pic']:
+                self.add_ressource(url)
 
-    def add_ressource(self, url):
-        print("lol")
-# TODO dl ressource add to storage
+    def add_resource(self, url):
+        if url not in self.resource:
+            print(url)
