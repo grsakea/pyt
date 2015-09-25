@@ -14,6 +14,7 @@ class StatusWidget(QWidget):
         super().__init__()
 
         self.tid = tweet.tid
+        self.tweet = tweet
         if tweet.rt:
             self.rt = True
             self.st = tweet.status
@@ -23,7 +24,6 @@ class StatusWidget(QWidget):
             self.st = tweet.status
 
         self.initUI(tweet)
-        print("-----------------")
 
     def getPix(self, url, scaled=False):
         r = requests.get(url)
@@ -49,36 +49,24 @@ class StatusWidget(QWidget):
         return(chosen)
 
     def process_text(self, status):
-        orig_text = status.text
         html_text = status.text
         pretty_text = status.text
 
         html_text = html_text.replace("\n", "<br>")
         html_text = html_text.replace("<br><br>", "<br>")
-        if hasattr(status, 'extended_entities'):
-            for i in status.extended_entities['media']:
-                if (i['type'] == 'animated_gif' or i['type'] == 'video'):
-                    html_text += " <a href={0}>Vid</a>".\
-                                 format(self.choose_video(i))
-                    html_text = html_text.replace(i['url'], '')
-                    pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += " Vid"
-                else:
-                    html_text += " <a href={0}:orig>Pic</a>".\
-                            format(i['media_url_https'])
-                    html_text = html_text.replace(i['url'], '')
-                    pretty_text = pretty_text.replace(i['url'], '')
-                    pretty_text += " Pic"
 
-        if 'urls' in status.entities:
-            for i in status.entities['urls']:
-                to_rep = orig_text[i['indices'][0]:i['indices'][1]]
-                in_place = '<a href="{0}">{1}</a>'.format(i['expanded_url'],
-                                                          i['display_url'])
-                html_text = html_text.replace(to_rep, in_place)
-                pretty_text = pretty_text.replace(to_rep, i['display_url'])
+        for i, j in self.tweet.ent['pic']:
+            html_text = html_text.replace(i, " <a href={0}>Pic</a>".format(j))
+            pretty_text = pretty_text.replace(i, ' Pic')
+        for i, j in self.tweet.ent['vid']:
+            html_text = html_text.replace(i, " <a href={0}>Vid</a>".format(j))
+            pretty_text = pretty_text.replace(i, ' Vid')
+        for i, j, k in self.tweet.ent['url']:
+            html_text = html_text.replace(i, " <a href={0}>{1}</a>".
+                                          format(k, j))
+            pretty_text = pretty_text.replace(i, j)
 
-        status.text = html_text
+        self.text = html_text
 
         splitted = pretty_text.split("\n")
         nb = len(splitted)
@@ -87,7 +75,6 @@ class StatusWidget(QWidget):
             if len(i) == 0:
                 nb -= 1
 
-        print(orig_text)
         return nb
 
     def add_pic(self):
@@ -110,7 +97,7 @@ class StatusWidget(QWidget):
     def add_text(self):
         nb_linebreak = self.process_text(self.st)
         text = QTextBrowser()
-        text.setHtml(self.st.text)
+        text.setHtml(self.text)
         text.setOpenExternalLinks(True)
         text.moveCursor(QTextCursor.End)
         if nb_linebreak == 1:
