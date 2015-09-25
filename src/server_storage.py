@@ -9,7 +9,7 @@ class Storage:
             self.tweets_id.add(tweet.tid)
             self.tweets.append(tweet)
             for _, url in tweet.ent['pic']:
-                self.add_ressource(url)
+                self.add_resource(url)
 
     def add_resource(self, url):
         if url not in self.resource:
