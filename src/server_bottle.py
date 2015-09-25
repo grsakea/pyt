@@ -1,5 +1,5 @@
 import pickle
-from bottle import Bottle, run, abort
+from bottle import Bottle, run, abort, request
 
 app = Bottle()
 store = None
@@ -24,6 +24,13 @@ def status_from_id(sid):
         return pickle.dumps(to_send)
 
     abort(400)
+
+
+@app.post('/content')
+def get_resource():
+    req = request.forms.get('resource')
+    print(req)
+    return store.resource[req]
 
 
 @app.route('/status/length')

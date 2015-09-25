@@ -13,14 +13,12 @@ class Storage:
             self.tweets.append(tweet)
             for _, url in tweet.ent['pic']:
                 self.add_resource(url)
+            for url in tweet.ent['profile']:
+                self.add_resource(url)
 
     def add_resource(self, url):
+        print(url)
         if url not in self.resource:
             r = requests.get(url, stream=True)
-            name = url[url.rfind('/'):]
-            print(name)
-            with open('/tmp' + name, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
+            print(type(r.content))
+            self.resource[url] = r.content
