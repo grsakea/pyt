@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import threading
+import time
+import queue
 import tweepy
 import os.path
 import server_bottle
@@ -50,6 +53,19 @@ def start_stream(auth, store):
     return stream
 
 
+def keepalive_stream(stream, q):
+    loop = True
+    while loop:
+        if not stream.running:
+            print("restarting")
+            stream.userstream(async=True)
+        if not q.empty():
+            print("lol")
+            stream.disconnect()
+            return
+        time.sleep(5)
+
+
 def main():
     store = Storage()
     auth = load_auth()
@@ -59,9 +75,15 @@ def main():
         store.tweets.append(Tweet(i))
     store.tweets.sort()
     print("Tweets Downloaded")
-    start_stream(auth, store)
+    stream = start_stream(auth, store)
+    q = queue.Queue()
+    t = threading.Thread(target=keepalive_stream, args=(stream, q))
+    t.start()
     print("Starting Server")
     server_bottle.launch_server(store)
+    print("Finished Server")
+    q.put("stop")
+    t.join()
 
 
 if __name__ == '__main__':
