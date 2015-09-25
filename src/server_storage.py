@@ -1,3 +1,6 @@
+import requests
+
+
 class Storage:
     def __init__(self):
         self.tweets = []
@@ -13,4 +16,11 @@ class Storage:
 
     def add_resource(self, url):
         if url not in self.resource:
-            print(url)
+            r = requests.get(url, stream=True)
+            name = url[url.rfind('/'):]
+            print(name)
+            with open('~/wonder/' + name) as f:
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
