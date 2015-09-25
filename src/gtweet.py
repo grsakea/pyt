@@ -13,11 +13,11 @@ class StatusWidget(QWidget):
     def __init__(self, tweet):
         super().__init__()
 
-        self.tid = tweet.status.id
-        if hasattr(tweet.status, 'retweeted_status'):
+        self.tid = tweet.tid
+        if tweet.rt:
             self.rt = True
-            self.st = tweet.status.retweeted_status
-            self.rtst = tweet.status
+            self.st = tweet.status
+            self.rtst = tweet.o_status
         else:
             self.rt = False
             self.st = tweet.status
@@ -127,13 +127,8 @@ class StatusWidget(QWidget):
         self.lay.addWidget(text, 1, 1, 1, 3)
 
     def add_username(self):
-        if self.rt:
-            name = '<b>' + self.st.user.name + '</b> <i>@' +\
-                    self.st.user.screen_name +\
-                   '</i> RT by: <b>' + self.rtst.user.name + '</b>'
-        else:
-            name = "<b>" + self.st.user.name + "</b> <i>@" +\
-                    self.st.user.screen_name + "</i>"
+        name = "<b>" + self.st.user.name + "</b> <i>@" +\
+                self.st.user.screen_name + "</i>"
 
         self.lay.addWidget(QLabel(name), 0, 1)
 
@@ -141,7 +136,7 @@ class StatusWidget(QWidget):
         icon = QIcon.fromTheme("edit-delete")
         self.button = QPushButton(icon, "")
         self.button.pressed.connect(self.send_delete)
-        self.lay.addWidget(self.button, 0, 5, -1, 1)
+        self.lay.addWidget(self.button, 1, 4)
 
     def send_delete(self):
         if self.rt:

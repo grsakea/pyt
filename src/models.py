@@ -1,7 +1,14 @@
 class Tweet():
     def __init__(self, status):
         self.status = status
+        self.rt = hasattr(self.status, 'retweeted_status')
+
+        if self.rt:
+            self.status = status.retweeted_status
+            self.o_status = status
+
         self.tid = status.id
+        self.text = self.status.text
         self.user = status.user
         self._list_ressource()
 
@@ -10,6 +17,10 @@ class Tweet():
         self.ent['vid'] = []
         self.ent['pic'] = []
         self.ent['url'] = []
+        self.ent['profile'] = [self.user.profile_image_url_https]
+        if self.rt:
+            self.ent['profile'].append(self.o_status.user.
+                                       profile_image_url_https)
 
         if hasattr(self.status, 'extended_entities'):
             for i in self.status.extended_entities['media']:
