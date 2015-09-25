@@ -2,6 +2,7 @@
 
 import threading
 import time
+import sys
 import queue
 import tweepy
 import os.path
@@ -15,11 +16,11 @@ from server_storage import Storage
 
 class StreamHandler(StreamListener):
     def __init__(self, store):
-        self.tweets = store.tweets
+        self.store = store
         super().__init__()
 
     def on_status(self, status):
-        self.tweets.append(Tweet(status))
+        self.store.add_tweet(Tweet(status))
         return True
 
     def on_error(self, status):
@@ -60,7 +61,6 @@ def keepalive_stream(stream, q):
             print("restarting")
             stream.userstream(async=True)
         if not q.empty():
-            print("lol")
             stream.disconnect()
             return
         time.sleep(5)
@@ -70,9 +70,9 @@ def main():
     store = Storage()
     auth = load_auth()
     api = tweepy.API(auth)
-    st = api.home_timeline(count=200)
+    st = api.home_timeline(count=sys.argv[1])
     for i in st:
-        store.tweets.append(Tweet(i))
+        store.add_tweet(Tweet(i))
     store.tweets.sort()
     print("Tweets Downloaded")
     stream = start_stream(auth, store)
