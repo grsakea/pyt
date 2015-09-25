@@ -13,6 +13,8 @@ class Storage:
             self.tweets.append(tweet)
             for _, url in tweet.ent['pic']:
                 self.add_resource(url)
+            for _, url in tweet.ent['vid']:
+                self.add_resource(url)
             for url in tweet.ent['profile']:
                 self.add_resource(url)
 
