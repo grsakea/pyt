@@ -20,5 +20,4 @@ class Storage:
         print(url)
         if url not in self.resource:
             r = requests.get(url, stream=True)
-            print(type(r.content))
             self.resource[url] = r.content
