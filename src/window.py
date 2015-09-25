@@ -3,7 +3,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from gtweet import StatusWidget
-import http.client
+import requests
 import pickle
 
 
@@ -34,11 +34,9 @@ class MainWindow(QWidget):
         else:
             id = self.tweets[-1].tid
 
-        conn = http.client.HTTPConnection("127.0.0.2", 8080)
-        conn.request("GET", "/status/from_id/" + str(id))
-        resp = conn.getresponse()
-        if resp.status == 200:
-            tw = pickle.load(resp)
+        r = requests.get("127.0.0.2:8080/status/from_id" + str(id))
+        if r.status_code == 200:
+            tw = pickle.load(r.data)
             tw.sort()
             for i in tw:
                 self.addTweet(i)
