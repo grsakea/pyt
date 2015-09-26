@@ -56,16 +56,18 @@ class StatusWidget(QWidget):
         html_text = html_text.replace("<br><br>", "<br>")
 
         for i, j in self.tweet.ent['pic']:
-            html_text = html_text.replace(i, " <a href={0}>Pic</a>".format(j))
+            html_text = html_text.replace(i, " <a href='{0}'>\
+                    Pic</a>".format(j))
             pretty_text = pretty_text.replace(i, ' Pic')
         for i, j in self.tweet.ent['vid']:
-            html_text = html_text.replace(i, " <a href={0}>Vid</a>".format(j))
+            html_text = html_text.replace(i, " <a href='{0}'>\
+                    Vid</a>".format(j))
             pretty_text = pretty_text.replace(i, ' Vid')
         for i, j, k in self.tweet.ent['url']:
             to_rep = status.text[i[0]:i[1]]
-            html_text = html_text.replace(to_rep, " <a href={0}>{1}</a>".
-                                          format(k, j))
-            pretty_text = pretty_text.replace(i, j)
+            html_text = html_text.replace(to_rep, "<a href='{0}'>\
+                    {1}</a>".format(k, j))
+            pretty_text = pretty_text.replace(to_rep, j)
 
         self.text = html_text
 

@@ -39,7 +39,6 @@ class MainWindow(QWidget):
             tw = pickle.loads(r.content)
             tw.sort()
             for i in tw:
-                print(i.ent['url'])
                 self.addTweet(i)
 
     def initUI(self):
