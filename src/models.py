@@ -28,10 +28,8 @@ class Tweet():
                     self.ent['vid'].append((i['url'], self.choose_video(i)))
                 else:
                     self.ent['pic'].append((i['url'], i['media_url_https']))
-        print(self.status.text)
         if 'urls' in self.status.entities:
             for i in self.status.entities['urls']:
-                print(i)
                 self.ent['url'].append((i['indices'], i['display_url'],
                                        i['expanded_url']))
 
