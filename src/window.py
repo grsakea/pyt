@@ -38,8 +38,8 @@ class MainWindow(QWidget):
         if r.status_code == 200:
             tw = pickle.loads(r.content)
             tw.sort()
-            print(len(tw))
             for i in tw:
+                print(i.ent['url'])
                 self.addTweet(i)
 
     def initUI(self):
