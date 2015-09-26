@@ -1,4 +1,3 @@
-import requests
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QPushButton
@@ -10,11 +9,12 @@ from datetime import timezone
 class StatusWidget(QWidget):
     delete_tweets = pyqtSignal(str)
 
-    def __init__(self, tweet):
+    def __init__(self, tweet, cache):
         super().__init__()
 
         self.tid = tweet.tid
         self.tweet = tweet
+        self.cache = cache
         if tweet.rt:
             self.rt = True
             self.st = tweet.status
@@ -26,11 +26,14 @@ class StatusWidget(QWidget):
         self.initUI(tweet)
 
     def getPix(self, url, scaled=False):
-        r = requests.get(url)
+        r = self.cache.get_resource(url)
         pi = QPixmap()
-        pi.loadFromData(r.content)
+        pi.loadFromData(r)
         if scaled:
-            pi = pi.scaled(24, 24,
+            pi = pi.scaled(30, 30,
+                           transformMode=QtCore.Qt.SmoothTransformation)
+        else:
+            pi = pi.scaled(60, 60,
                            transformMode=QtCore.Qt.SmoothTransformation)
         pict = QLabel()
         pict.setPixmap(pi)
@@ -82,12 +85,15 @@ class StatusWidget(QWidget):
 
     def add_pic(self):
         if self.rt:
-            pict1 = self.getPix(self.st.user.profile_image_url_https, False)
-            pict2 = self.getPix(self.rtst.user.profile_image_url_https, True)
+            print(self.tweet.status.user.profile_image_url_https)
+            print(self.tweet.o_status.user.profile_image_url_https)
+            print(self.tweet.ent['profile'])
+            pict1 = self.getPix(self.tweet.ent['profile'][0], False)
+            pict2 = self.getPix(self.tweet.ent['profile'][1], True)
             self.lay.addWidget(pict1, 0, 0, 2, 1)
             self.lay.addWidget(pict2, 1, 0)
         else:
-            pict = self.getPix(self.st.user.profile_image_url_https, False)
+            pict = self.getPix(self.tweet.ent['profile'][0], False)
             self.lay.addWidget(pict, 0, 0, 2, 1)
 
     def add_time(self):

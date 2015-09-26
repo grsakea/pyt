@@ -5,6 +5,7 @@ from PyQt5 import QtCore
 from gtweet import StatusWidget
 import requests
 import pickle
+from cache import Cache
 
 
 class MainWindow(QWidget):
@@ -14,6 +15,7 @@ class MainWindow(QWidget):
         self.hide()
 
         self.tweets = []
+        self.cache = Cache()
 
         self.fetch_tweets()
         self.tim = QTimer(self)
@@ -65,7 +67,7 @@ class MainWindow(QWidget):
         self.show()
 
     def addTweet(self, tweet):
-        widget = StatusWidget(tweet)
+        widget = StatusWidget(tweet, self.cache)
 
         self.tweets.append(widget)
         widget.delete_tweets.connect(self.deleteTweets)
