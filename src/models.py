@@ -3,11 +3,11 @@ class Tweet():
         self.status = status
         self.rt = hasattr(self.status, 'retweeted_status')
 
+        self.tid = status.id
         if self.rt:
             self.status = status.retweeted_status
             self.o_status = status
 
-        self.tid = status.id
         self.text = self.status.text
         self.user = status.user
         self._list_ressource()
@@ -17,7 +17,7 @@ class Tweet():
         self.ent['vid'] = []
         self.ent['pic'] = []
         self.ent['url'] = []
-        self.ent['profile'] = [self.user.profile_image_url_https.
+        self.ent['profile'] = [self.status.user.profile_image_url_https.
                                replace('normal', 'bigger')]
         if self.rt:
             self.ent['profile'].\
