@@ -27,7 +27,8 @@ class Tweet():
                 if (i['type'] == 'animated_gif' or i['type'] == 'video'):
                     self.ent['vid'].append((i['url'], self.choose_video(i)))
                 else:
-                    self.ent['pic'].append((i['url'], i['media_url_https']))
+                    self.ent['pic'].append((i['url'],
+                                            i['media_url_https']+':orig'))
         if 'urls' in self.status.entities:
             for i in self.status.entities['urls']:
                 self.ent['url'].append((i['indices'], i['display_url'],
