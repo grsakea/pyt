@@ -1,8 +1,7 @@
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QPushButton
-from PyQt5.QtGui import QPixmap, QTextCursor, QIcon
-from PyQt5 import QtCore
+from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter
 from datetime import timezone
 
 
@@ -25,19 +24,22 @@ class StatusWidget(QWidget):
 
         self.initUI(tweet)
 
-    def getPix(self, url, scaled=False):
-        r = self.cache.get_resource(url)
-        pi = QPixmap()
-        pi.loadFromData(r)
-        if scaled:
-            pi = pi.scaled(30, 30,
-                           transformMode=QtCore.Qt.SmoothTransformation)
-        else:
-            pi = pi.scaled(60, 60,
-                           transformMode=QtCore.Qt.SmoothTransformation)
-        pict = QLabel()
-        pict.setPixmap(pi)
-        return pict
+    def getPix(self, url1, url2=None):
+        img1 = self.cache.get_resource(url1)
+        i1 = QImage.fromData(img1)
+        i1 = i1.scaledToHeight(60, Qt.SmoothTransformation)
+        if url2 is not None:
+            img2 = self.cache.get_resource(url2)
+            i2 = QImage.fromData(img2)
+            i2 = i2.scaledToHeight(30, Qt.SmoothTransformation)
+            p = QPainter()
+            p.begin(i1)
+            p.drawImage(0, 30, i2)
+            p.end()
+
+        ret = QLabel()
+        ret.setPixmap(QPixmap.fromImage(i1))
+        return ret
 
     def choose_video(self, vids):
         chosen = vids['expanded_url']
@@ -84,17 +86,16 @@ class StatusWidget(QWidget):
         return nb
 
     def add_pic(self):
-        if self.rt:
-            print(self.tweet.status.user.profile_image_url_https)
-            print(self.tweet.o_status.user.profile_image_url_https)
-            print(self.tweet.ent['profile'])
-            pict1 = self.getPix(self.tweet.ent['profile'][0], False)
-            pict2 = self.getPix(self.tweet.ent['profile'][1], True)
-            self.lay.addWidget(pict1, 0, 0, 2, 1)
-            self.lay.addWidget(pict2, 1, 0)
-        else:
-            pict = self.getPix(self.tweet.ent['profile'][0], False)
-            self.lay.addWidget(pict, 0, 0, 2, 1)
+            # pict1 = self.getPix(self.tweet.ent['profile'][0], False)
+            # pict2 = self.getPix(self.tweet.ent['profile'][1], True)
+            if not self.rt:
+                pic = self.getPix(self.tweet.ent['profile'][0])
+            else:
+                pic = self.getPix(self.tweet.ent['profile'][0],
+                                  self.tweet.ent['profile'][1])
+
+            self.lay.addWidget(pic, 0, 0, 2, 1)
+            # self.lay.addWidget(pict2, 1, 0)
 
     def add_time(self):
         time = self.st.created_at.replace(tzinfo=timezone.utc)\
