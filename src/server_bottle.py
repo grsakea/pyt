@@ -28,8 +28,8 @@ def status_from_id(sid):
 
 @app.post('/content')
 def get_resource():
-    req = request.forms.get_resource('resource')
-    return store.resource[req]
+    req = request.forms.get('resource')
+    return store.get_resource(req)
 
 
 @app.route('/status/length')
