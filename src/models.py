@@ -39,7 +39,7 @@ class Tweet():
     def __lt__(self, other):
         return self.tid < other.tid
 
-    def choose_video(vids):
+    def choose_video(self, vids):
         chosen = vids['expanded_url']
         max_br = -1
         for i in vids['video_info']['variants']:
