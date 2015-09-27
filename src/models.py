@@ -18,11 +18,11 @@ class Tweet():
         self.ent['pic'] = []
         self.ent['url'] = []
         self.ent['profile'] = [self.status.user.profile_image_url_https.
-                               replace('normal', 'bigger')]
+                               replace('_normal', '')]
         if self.rt:
             self.ent['profile'].\
                     append(self.o_status.user.profile_image_url_https.
-                           replace('normal', 'bigger'))
+                           replace('normal', ''))
 
         if hasattr(self.status, 'extended_entities'):
             for i in self.status.extended_entities['media']:
