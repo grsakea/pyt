@@ -86,8 +86,6 @@ class StatusWidget(QWidget):
         return nb
 
     def add_pic(self):
-            # pict1 = self.getPix(self.tweet.ent['profile'][0], False)
-            # pict2 = self.getPix(self.tweet.ent['profile'][1], True)
             if not self.rt:
                 pic = self.getPix(self.tweet.ent['profile'][0])
             else:
@@ -95,7 +93,6 @@ class StatusWidget(QWidget):
                                   self.tweet.ent['profile'][1])
 
             self.lay.addWidget(pic, 0, 0, 2, 1)
-            # self.lay.addWidget(pict2, 1, 0)
 
     def add_time(self):
         time = self.st.created_at.replace(tzinfo=timezone.utc)\

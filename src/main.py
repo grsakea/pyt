@@ -3,6 +3,8 @@
 import sys
 import window
 from PyQt5.QtWidgets import QApplication
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def main():
