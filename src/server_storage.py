@@ -23,3 +23,11 @@ class Storage:
         if url not in self.resource:
             r = requests.get(url, stream=True)
             self.resource[url] = r.content
+
+    def get_resource(self, url):
+        if url not in self.resource:
+            r = requests.get(url, stream=True)
+            self.resource[url] = r.content
+            return r.content
+        else:
+            return self.resource[url]

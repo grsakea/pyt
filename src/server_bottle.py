@@ -28,7 +28,7 @@ def status_from_id(sid):
 
 @app.post('/content')
 def get_resource():
-    req = request.forms.get('resource')
+    req = request.forms.get_resource('resource')
     return store.resource[req]
 
 
