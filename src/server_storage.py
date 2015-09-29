@@ -19,7 +19,6 @@ class Storage:
                 self.add_resource(url)
 
     def add_resource(self, url):
-        print(url)
         if url not in self.resource:
             r = requests.get(url, stream=True)
             self.resource[url] = r.content
