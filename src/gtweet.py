@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QPushButton
 from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter
 from datetime import timezone
+from media_display import MediaWidget
 
 
 class StatusWidget(QWidget):
@@ -130,13 +131,24 @@ class StatusWidget(QWidget):
         icon = QIcon.fromTheme("edit-delete")
         self.button = QPushButton(icon, "")
         self.button.pressed.connect(self.send_delete)
+
+        icon2 = QIcon.fromTheme("media-playback-start")
+        self.button2 = QPushButton(icon2, "")
+        self.button2.pressed.connect(self.open_media)
+
         self.lay.addWidget(self.button, 1, 4)
+        self.lay.addWidget(self.button2, 1, 5)
 
     def send_delete(self):
         if self.rt:
             self.delete_tweets.emit(self.rtst.id_str)
         else:
             self.delete_tweets.emit(self.st.id_str)
+
+    def open_media(self):
+        self.ffd = MediaWidget("https://pbs.twimg.com/media/CQQd5rTU8AEuxy6.jpg", self.cache)
+        self.ffd.show()
+        print("Opened")
 
     def initUI(self, tweet):
         layout = QGridLayout()
