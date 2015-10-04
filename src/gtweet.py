@@ -64,12 +64,12 @@ class StatusWidget(QWidget):
 
         for i, j in self.tweet.ent['pic']:
             html_text = html_text.replace(i, "")
-            html_text += " <a href='{0}'>Pic</a>".format(j)
+            html_text += " <a href='pic://t?{0}'>Pic</a>".format(j)
             pretty_text = pretty_text.replace(i, '')
             pretty_text += ' Pic'
         for i, j in self.tweet.ent['vid']:
             html_text = html_text.replace(i, '')
-            html_text += " <a href='{0}'>Vid</a>".format(j)
+            html_text += " <a href='vid://t?{0}'>Vid</a>".format(j)
             pretty_text = pretty_text.replace(i, "")
             pretty_text += ' Vid'
         for i, j, k in self.tweet.ent['url']:
@@ -110,7 +110,6 @@ class StatusWidget(QWidget):
         text = QTextBrowser()
         text.setHtml(self.text)
         text.setOpenLinks(False)
-        # text.setOpenExternalLinks(True)
         text.moveCursor(QTextCursor.End)
         if nb_linebreak == 1:
             text.setFixedSize(500, 30)
@@ -147,8 +146,10 @@ class StatusWidget(QWidget):
             self.delete_tweets.emit(self.st.id_str)
 
     def link_clicked(self, url):
-        if url.host() == "pbs.twimg.com":
-            self.media = MediaWidget(url.url(), self.cache)
+        print(url.scheme())
+        sc = url.scheme()
+        if sc == "pic" or sc == "gif" or sc == "vid":
+            self.media = MediaWidget(url.query(), sc, self.cache)
             self.media.show()
         else:
             QDesktopServices.openUrl(url)

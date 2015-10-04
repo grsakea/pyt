@@ -6,13 +6,13 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 
 
 class MediaWidget(QWidget):
-    def __init__(self, media, cache):
+    def __init__(self, media, m_type, cache):
         super().__init__()
         self.setWindowTitle('Twitter Client')
         layout = QGridLayout()
         self.setLayout(layout)
         self.cache = cache
-        if "media" == media.split("/")[3]:
+        if m_type == "pic":
             layout.addWidget(self.display_pic(media), 0, 0)
         else:
             layout.addWidget(self.display_vid(media), 0, 0)
