@@ -1,7 +1,8 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
         QFrame, QPushButton
-from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter
+from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter,\
+        QDesktopServices
 from datetime import timezone
 from media_display import MediaWidget
 
@@ -106,7 +107,8 @@ class StatusWidget(QWidget):
         nb_linebreak = self.process_text(self.st)
         text = QTextBrowser()
         text.setHtml(self.text)
-        text.setOpenExternalLinks(True)
+        text.setOpenLinks(False)
+        # text.setOpenExternalLinks(True)
         text.moveCursor(QTextCursor.End)
         if nb_linebreak == 1:
             text.setFixedSize(500, 30)
@@ -118,6 +120,8 @@ class StatusWidget(QWidget):
             text.setFixedSize(500, 88)
         else:
             text.setFixedSize(500, 108)
+
+        text.anchorClicked.connect(self.link_clicked)
 
         self.lay.addWidget(text, 1, 1, 1, 3)
 
@@ -132,12 +136,7 @@ class StatusWidget(QWidget):
         self.button = QPushButton(icon, "")
         self.button.pressed.connect(self.send_delete)
 
-        icon2 = QIcon.fromTheme("media-playback-start")
-        self.button2 = QPushButton(icon2, "")
-        self.button2.pressed.connect(self.open_media)
-
         self.lay.addWidget(self.button, 1, 4)
-        self.lay.addWidget(self.button2, 1, 5)
 
     def send_delete(self):
         if self.rt:
@@ -145,10 +144,12 @@ class StatusWidget(QWidget):
         else:
             self.delete_tweets.emit(self.st.id_str)
 
-    def open_media(self):
-        self.ffd = MediaWidget("https://pbs.twimg.com/media/CQQd5rTU8AEuxy6.jpg", self.cache)
-        self.ffd.show()
-        print("Opened")
+    def link_clicked(self, url):
+        if url.host() == "pbs.twimg.com":
+            self.media = MediaWidget(url.url(), self.cache)
+            self.media.show()
+        else:
+            QDesktopServices.openUrl(url)
 
     def initUI(self, tweet):
         layout = QGridLayout()
