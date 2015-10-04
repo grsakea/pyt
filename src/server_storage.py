@@ -15,6 +15,8 @@ class Storage:
                 self.add_resource(url)
             for _, url in tweet.ent['vid']:
                 self.add_resource(url)
+            for _, url in tweet.ent['gif']:
+                self.add_resource(url)
             for url in tweet.ent['profile']:
                 self.add_resource(url)
 

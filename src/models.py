@@ -15,6 +15,7 @@ class Tweet():
     def _list_ressource(self):
         self.ent = {}
         self.ent['vid'] = []
+        self.ent['gif'] = []
         self.ent['pic'] = []
         self.ent['url'] = []
         self.ent['profile'] = [self.status.user.profile_image_url_https.
@@ -26,7 +27,9 @@ class Tweet():
 
         if hasattr(self.status, 'extended_entities'):
             for i in self.status.extended_entities['media']:
-                if (i['type'] == 'animated_gif' or i['type'] == 'video'):
+                if (i['type'] == 'animated_gif'):
+                    self.ent['gif'].append((i['url'], self.choose_video(i)))
+                elif (i['type'] == 'video'):
                     self.ent['vid'].append((i['url'], self.choose_video(i)))
                 else:
                     self.ent['pic'].append((i['url'],
