@@ -67,6 +67,11 @@ class StatusWidget(QWidget):
             html_text += " <a href='pic://t?{0}'>Pic</a>".format(j)
             pretty_text = pretty_text.replace(i, '')
             pretty_text += ' Pic'
+        for i, j in self.tweet.ent['gif']:
+            html_text = html_text.replace(i, "")
+            html_text += " <a href='gif://t?{0}'>Gif</a>".format(j)
+            pretty_text = pretty_text.replace(i, '')
+            pretty_text += ' Gif'
         for i, j in self.tweet.ent['vid']:
             html_text = html_text.replace(i, '')
             html_text += " <a href='vid://t?{0}'>Vid</a>".format(j)
@@ -149,8 +154,8 @@ class StatusWidget(QWidget):
         print(url.scheme())
         sc = url.scheme()
         if sc == "pic" or sc == "gif" or sc == "vid":
+            print(self.tweet.ent)
             self.media = MediaWidget(url.query(), sc, self.cache)
-            self.media.show()
         else:
             QDesktopServices.openUrl(url)
 
