@@ -1,6 +1,7 @@
 import requests
 
 
+# TODO expire cache to avoid filling the memory
 class Storage:
     def __init__(self):
         self.tweets = []
@@ -19,6 +20,13 @@ class Storage:
                 self.add_resource(url)
             for url in tweet.ent['profile']:
                 self.add_resource(url)
+
+    def get_tweet(self, sid):
+        if sid in self.tweets_id:
+            for i in self.tweets:
+                if self.tweets[i].tid == sid:
+                    return self.tweets[i]
+        # Fetch cache
 
     def add_resource(self, url):
         if url not in self.resource:
