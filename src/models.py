@@ -5,8 +5,8 @@ class Tweet():
 
         self.tid = status.id
         if self.rt:
-            self.status = status.retweeted_status
             self.o_status = status
+            self.status = self.o_status.retweeted_status
 
         self.text = self.status.text
         self.user = status.user
