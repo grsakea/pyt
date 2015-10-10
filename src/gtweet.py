@@ -151,10 +151,8 @@ class StatusWidget(QWidget):
             self.delete_tweets.emit(self.st.id_str)
 
     def link_clicked(self, url):
-        print(url.scheme())
         sc = url.scheme()
         if sc == "pic" or sc == "gif" or sc == "vid":
-            print(self.tweet.ent)
             self.media = MediaWidget(url.query(), sc, self.cache)
         else:
             QDesktopServices.openUrl(url)
