@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
@@ -18,9 +18,9 @@ class MainWindow(QWidget):
         self.cache = Cache()
 
         self.fetch_tweets()
-        self.tim = QTimer(self)
-        self.tim.timeout.connect(self.fetch_tweets)
-        self.tim.start(60000)
+        # self.tim = QTimer(self)
+        # self.tim.timeout.connect(self.fetch_tweets)
+        # self.tim.start(60000)
 
         self.show()
 
@@ -41,6 +41,8 @@ class MainWindow(QWidget):
             tw = pickle.loads(r.content)
             tw.sort()
             for i in tw:
+                for _, j in i.ent['pic']:
+                    self.cache.get_resource(j)
                 self.addTweet(i)
 
     def initUI(self):
@@ -63,6 +65,10 @@ class MainWindow(QWidget):
         lay2.setSpacing(0)
         lay.setSpacing(0)
         lay.setContentsMargins(0, 0, 0, 0)
+
+        but = QPushButton("Refresh")
+        lay.addWidget(but)
+        but.pressed.connect(self.fetch_tweets)
 
         self.show()
 
