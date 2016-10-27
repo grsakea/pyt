@@ -13,7 +13,7 @@ setup(
             'Programming Language :: Python :: 3'
             'License :: OSI Approved :: MIT License',
             ],
-        install_requires=['requests', 'tweepy', 'bottle'],
+        install_requires=['requests', 'tweepy', 'bottle', 'PyQt5'],
         packages=['gui', 'common', 'server'],
         entry_points={
             'console_scripts': [
