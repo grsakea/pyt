@@ -6,12 +6,12 @@ import sys
 import queue
 import tweepy
 import os.path
-import server_bottle
+import server.server_bottle
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
-from models import Tweet
-from server_storage import Storage
+from common.models import Tweet
+from server.server_storage import Storage
 
 
 class StreamHandler(StreamListener):
@@ -66,7 +66,7 @@ def keepalive_stream(stream, q):
         time.sleep(5)
 
 
-def main():
+def startServer():
     store = Storage()
     auth = load_auth()
     api = tweepy.API(auth)
@@ -80,11 +80,7 @@ def main():
     t = threading.Thread(target=keepalive_stream, args=(stream, q))
     t.start()
     print("Starting Server")
-    server_bottle.launch_server(store)
+    server.server_bottle.launch_server(store)
     print("Finished Server")
     q.put("stop")
     t.join()
-
-
-if __name__ == '__main__':
-    main()

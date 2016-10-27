@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
 from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter,\
         QDesktopServices
 from datetime import timezone
-from media_display import MediaWidget
+from gui.media_display import MediaWidget
 
 
 class StatusWidget(QWidget):

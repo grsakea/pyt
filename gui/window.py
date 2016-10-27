@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
-from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
-from gtweet import StatusWidget
+from gui.gtweet import StatusWidget
 import requests
 import pickle
-from cache import Cache
+from common.cache import Cache
+import os.path
+
+lt = os.path.expanduser("~/.config/last_tweet")
 
 
 class MainWindow(QWidget):
@@ -18,20 +20,18 @@ class MainWindow(QWidget):
         self.cache = Cache()
 
         self.fetch_tweets()
-        # self.tim = QTimer(self)
-        # self.tim.timeout.connect(self.fetch_tweets)
-        # self.tim.start(60000)
 
         self.show()
 
     def fetch_tweets(self):
         if len(self.tweets) == 0:
             try:
-                f = open("last_tweet", 'r')
+                f = open(lt, 'r')
                 id = int(f.read())
                 print(id)
                 f.close()
-            except:
+            except Exception as e:
+                print(e)
                 id = 0
         else:
             id = self.tweets[-1].tid
@@ -85,6 +85,6 @@ class MainWindow(QWidget):
             if i.tid <= id:
                 self.lay.removeWidget(i)
                 i.hide()
-        f = open("last_tweet", 'w')
+        f = open(lt, 'w')
         f.write(string_id)
         f.close()
