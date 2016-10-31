@@ -70,7 +70,7 @@ def startServer():
     store = Storage()
     auth = load_auth()
     api = tweepy.API(auth)
-    st = api.home_timeline(count=sys.argv[1])
+    st = api.home_timeline(count=sys.argv[1], tweet_mode="extended")
     for i in st:
         store.add_tweet(Tweet(i))
     store.tweets.sort()

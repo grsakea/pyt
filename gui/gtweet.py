@@ -56,8 +56,17 @@ class StatusWidget(QWidget):
         return(chosen)
 
     def process_text(self, status):
-        html_text = status.text
-        pretty_text = status.text
+        print("---")
+        if (self.tweet.status.truncated):
+            print("extended")
+            # status.text = self.tweet.status.extended_tweet['full_text']
+            print(status.text)
+            print(self.tweet.status.extended_tweet['entities'])
+            print("o")
+            print(self.tweet.status.extended_entities)
+            # self.status.extended_entities = self.status.extended_tweet['entities']
+        html_text = self.tweet.text
+        pretty_text = self.tweet.text
 
         html_text = html_text.replace("\n", "<br>")
         html_text = html_text.replace("<br><br>", "<br>")
@@ -78,7 +87,7 @@ class StatusWidget(QWidget):
             pretty_text = pretty_text.replace(i, "")
             pretty_text += ' Vid'
         for i, j, k in self.tweet.ent['url']:
-            to_rep = status.text[i[0]:i[1]]
+            to_rep = self.tweet.text[i[0]:i[1]]
             html_text = html_text.replace(to_rep, "<a href='{0}'>\
                     {1}</a>".format(k, j))
             pretty_text = pretty_text.replace(to_rep, j)
