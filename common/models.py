@@ -8,15 +8,12 @@ class Tweet():
             self.o_status = status
             self.status = self.o_status.retweeted_status
 
-        print("---")
         if self.status.truncated:
             self.status.text = self.status.extended_tweet['full_text']
             if "entities" in self.status.extended_tweet:
-                print("entities")
-                self.status.extended_entities = self.status.extended_tweet['entities']
+                self.status.extended_entities = \
+                    self.status.extended_tweet['entities']
             self.status.entities = {}
-            print()
-            print("Found ONE")
 
         if not hasattr(self.status, "extended_entities"):
             self.status.extended_entities = {}
@@ -60,24 +57,6 @@ class Tweet():
         for i in self.entities['url']:
             self.ent['url'].append((i['indices'], i['display_url'],
                                    i['expanded_url']))
-
-        # if hasattr(self.status, 'extended_entities'):
-            # for i in self.status.extended_entities['media']:
-                # if (i['type'] == 'animated_gif'):
-                    # self.ent['gif'].append((i['url'], self.choose_video(i)))
-                # elif (i['type'] == 'video'):
-                    # self.ent['vid'].append((i['url'], self.choose_video(i)))
-                # else:
-                    # self.ent['pic'].append((i['url'],
-                                            # i['media_url_https']+':orig'))
-            # for i in self.status.extended_entities['url']:
-                # self.ent['url'].append((i['indices'], i['display_url'],
-                                       # i['expanded_url']))
-
-        # if 'urls' in self.status.entities:
-            # for i in self.status.entities['urls']:
-                # self.ent['url'].append((i['indices'], i['display_url'],
-                                       # i['expanded_url']))
 
     def __lt__(self, other):
         return self.tid < other.tid

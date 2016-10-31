@@ -56,15 +56,6 @@ class StatusWidget(QWidget):
         return(chosen)
 
     def process_text(self, status):
-        print("---")
-        if (self.tweet.status.truncated):
-            print("extended")
-            # status.text = self.tweet.status.extended_tweet['full_text']
-            print(status.text)
-            print(self.tweet.status.extended_tweet['entities'])
-            print("o")
-            print(self.tweet.status.extended_entities)
-            # self.status.extended_entities = self.status.extended_tweet['entities']
         html_text = self.tweet.text
         pretty_text = self.tweet.text
 
