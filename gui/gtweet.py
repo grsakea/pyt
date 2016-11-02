@@ -107,8 +107,9 @@ class StatusWidget(QWidget):
         text.setOpenLinks(False)
         # text.moveCursor(QTextCursor.End)
         text.setMinimumWidth(500)
-        text.setMinimumHeight(31)
-        text.setMaximumHeight(108)
+        text.setMaximumWidth(500)
+        text.document().setTextWidth(500)
+        text.setMinimumHeight((text.document().size().height())+5)
         text.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         text.anchorClicked.connect(self.link_clicked)

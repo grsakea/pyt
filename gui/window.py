@@ -47,7 +47,8 @@ class MainWindow(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Twitter Client')
-        QIcon.setThemeName("Faenza-Dark")
+        self.setWindowIcon(QIcon("twitter.svg"))
+        QIcon.setThemeName("Adwaita")
 
         lay = QVBoxLayout(self)
         scr = QScrollArea(self)
