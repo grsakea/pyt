@@ -51,6 +51,13 @@ def get_resource():
     return store.get_resource(req)
 
 
+@app.post('/multiple_content')
+def get_multiple_resource():
+    urls = request.json
+    print(type(urls))
+    return pickle.dumps(store.get_multiple_resource(urls))
+
+
 @app.route('/status/length')
 def status_length():
     return str(len(store.tweets))

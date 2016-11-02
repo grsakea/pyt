@@ -40,3 +40,10 @@ class Storage:
             return r.content
         else:
             return self.resource[url]
+
+    def get_multiple_resource(self, urls):
+        out = {}
+        for i in urls:
+            print("-" + i)
+            out[i] = self.get_resource(i)
+        return out

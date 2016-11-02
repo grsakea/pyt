@@ -42,7 +42,12 @@ class MainWindow(QWidget):
             tw.sort()
             for i in tw:
                 for _, j in i.ent['pic']:
-                    self.cache.get_resource(j)
+                    self.cache.queue_ressource(j)
+                for j in i.ent['profile']:
+                    self.cache.queue_ressource(j)
+            self.cache.fetch_queue()
+
+            for i in tw:
                 self.addTweet(i)
 
     def initUI(self):
