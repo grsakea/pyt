@@ -1,9 +1,7 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTextBrowser,\
-        QFrame, QPushButton
-from PyQt5.QtGui import QPixmap, QTextCursor, QIcon, QImage, QPainter,\
-        QDesktopServices
-from datetime import timezone
+        QFrame, QPushButton, QSizePolicy
+from PyQt5.QtGui import QPixmap, QIcon, QImage, QPainter, QDesktopServices
 from gui.media_display import MediaWidget
 
 
@@ -16,13 +14,6 @@ class StatusWidget(QWidget):
         self.tid = tweet.tid
         self.tweet = tweet
         self.cache = cache
-        if tweet.rt:
-            self.rt = True
-            self.st = tweet.status
-            self.rtst = tweet.o_status
-        else:
-            self.rt = False
-            self.st = tweet.status
 
         self.initUI(tweet)
 
@@ -55,7 +46,7 @@ class StatusWidget(QWidget):
                 pass
         return(chosen)
 
-    def process_text(self, status):
+    def process_text(self):
         html_text = self.tweet.text
         pretty_text = self.tweet.text
 
@@ -95,7 +86,7 @@ class StatusWidget(QWidget):
         return nb
 
     def add_pic(self):
-            if not self.rt:
+            if not self.tweet.rt:
                 pic = self.getPix(self.tweet.ent['profile'][0])
             else:
                 pic = self.getPix(self.tweet.ent['profile'][0],
@@ -104,36 +95,29 @@ class StatusWidget(QWidget):
             self.lay.addWidget(pic, 0, 0, 2, 1)
 
     def add_time(self):
-        time = self.st.created_at.replace(tzinfo=timezone.utc)\
-                .astimezone(tz=None)
+        time = self.tweet.time
         string = time.strftime("%d/%m - %H:%M")
 
         self.lay.addWidget(QLabel(string), 0, 3)
 
     def add_text(self):
-        nb_linebreak = self.process_text(self.st)
+        self.process_text()
         text = QTextBrowser()
         text.setHtml(self.text)
         text.setOpenLinks(False)
-        text.moveCursor(QTextCursor.End)
-        if nb_linebreak == 1:
-            text.setFixedSize(500, 30)
-        elif nb_linebreak == 2:
-            text.setFixedSize(500, 48)
-        elif nb_linebreak == 3:
-            text.setFixedSize(500, 68)
-        elif nb_linebreak == 4:
-            text.setFixedSize(500, 88)
-        else:
-            text.setFixedSize(500, 108)
+        # text.moveCursor(QTextCursor.End)
+        text.setMinimumWidth(500)
+        text.setMinimumHeight(31)
+        text.setMaximumHeight(108)
+        text.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         text.anchorClicked.connect(self.link_clicked)
 
         self.lay.addWidget(text, 1, 1, 1, 3)
 
     def add_username(self):
-        name = "<b>" + self.st.user.name + "</b> <i>@" +\
-                self.st.user.screen_name + "</i>"
+        name = "<b>" + self.tweet.username + "</b> <i>@" +\
+                self.tweet.screen_name + "</i>"
 
         self.lay.addWidget(QLabel(name), 0, 1)
 
@@ -145,10 +129,7 @@ class StatusWidget(QWidget):
         self.lay.addWidget(self.button, 1, 4)
 
     def send_delete(self):
-        if self.rt:
-            self.delete_tweets.emit(self.rtst.id_str)
-        else:
-            self.delete_tweets.emit(self.st.id_str)
+        self.delete_tweets.emit(str(self.tweet.tid))
 
     def link_clicked(self, url):
         sc = url.scheme()

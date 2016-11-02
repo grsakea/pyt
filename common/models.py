@@ -1,49 +1,59 @@
+from datetime import timezone
+
+
 class Tweet():
     def __init__(self, status):
-        self.status = status
-        self.rt = hasattr(self.status, 'retweeted_status')
+        # self.status = status
+        self.rt = hasattr(status, 'retweeted_status')
 
         self.tid = status.id
+        o_status = None
         if self.rt:
-            self.o_status = status
-            self.status = self.o_status.retweeted_status
+            o_status = status
+            status = o_status.retweeted_status
 
-        if self.status.truncated:
-            self.status.text = self.status.extended_tweet['full_text']
-            if "entities" in self.status.extended_tweet:
-                self.status.extended_entities = \
-                    self.status.extended_tweet['entities']
-            self.status.entities = {}
+        self.time = status.created_at.replace(tzinfo=timezone.utc)\
+            .astimezone(tz=None)
 
-        if not hasattr(self.status, "extended_entities"):
-            self.status.extended_entities = {}
+        self.username = status.user.name
+        self.screen_name = status.user.screen_name
+
+        if status.truncated:
+            status.text = status.extended_tweet['full_text']
+            if "entities" in status.extended_tweet:
+                status.extended_entities = \
+                    status.extended_tweet['entities']
+            status.entities = {}
+
+        if not hasattr(status, "extended_entities"):
+            status.extended_entities = {}
 
         self.entities = {"url": [], "media": []}
-        if 'urls' in self.status.entities:
-            self.entities['url'] = self.status.entities['urls']
-        if 'urls' in self.status.extended_entities:
-            self.entities['url'] = self.status.extended_entities['urls']
-        if 'media' in self.status.extended_entities:
-            self.entities['media'] = self.status.extended_entities['media']
+        if 'urls' in status.entities:
+            self.entities['url'] = status.entities['urls']
+        if 'urls' in status.extended_entities:
+            self.entities['url'] = status.extended_entities['urls']
+        if 'media' in status.extended_entities:
+            self.entities['media'] = status.extended_entities['media']
 
-        if hasattr(self.status, 'full_text'):
-            self.text = self.status.full_text
+        if hasattr(status, 'full_text'):
+            self.text = status.full_text
         else:
-            self.text = self.status.text
+            self.text = status.text
         self.user = status.user
-        self._list_ressource()
+        self._list_ressource(status, o_status)
 
-    def _list_ressource(self):
+    def _list_ressource(self, status, o_status):
         self.ent = {}
         self.ent['vid'] = []
         self.ent['gif'] = []
         self.ent['pic'] = []
         self.ent['url'] = []
-        self.ent['profile'] = [self.status.user.profile_image_url_https.
+        self.ent['profile'] = [status.user.profile_image_url_https.
                                replace('normal', 'bigger')]
         if self.rt:
             self.ent['profile'].\
-                    append(self.o_status.user.profile_image_url_https.
+                    append(o_status.user.profile_image_url_https.
                            replace('normal', 'bigger'))
 
         for i in self.entities['media']:
