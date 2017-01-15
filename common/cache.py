@@ -29,6 +29,5 @@ class Cache:
                           json=out)
         self.queue = set()
         temp = pickle.loads(r.content)
-        print(type(temp))
         for i in temp:
             self.r[i] = temp[i]
