@@ -26,7 +26,6 @@ class Storage:
             for i in self.tweets:
                 if self.tweets[i].tid == sid:
                     return self.tweets[i]
-        # Fetch cache
 
     def add_resource(self, url):
         if url not in self.resource:
@@ -44,6 +43,5 @@ class Storage:
     def get_multiple_resource(self, urls):
         out = {}
         for i in urls:
-            print("-" + i)
             out[i] = self.get_resource(i)
         return out

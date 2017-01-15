@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QProgressDialog
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from gui.gtweet import StatusWidget
@@ -14,7 +14,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.hide()
+        # self.hide()
 
         self.tweets = []
         self.cache = Cache()
@@ -24,6 +24,9 @@ class MainWindow(QWidget):
         self.show()
 
     def fetch_tweets(self):
+        self.load_tweets()
+
+    def load_tweets(self):
         if len(self.tweets) == 0:
             try:
                 f = open(lt, 'r')

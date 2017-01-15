@@ -54,7 +54,6 @@ def get_resource():
 @app.post('/multiple_content')
 def get_multiple_resource():
     urls = request.json
-    print(type(urls))
     return pickle.dumps(store.get_multiple_resource(urls))
 
 
